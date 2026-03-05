@@ -1,0 +1,492 @@
+// =============================================
+// 14 MINERALES
+// =============================================
+const MINERALS = [
+  { key:'Oro', unit:'USD/kg', color:'#f0b429', gradient:['rgba(240,180,41,.22)','rgba(240,180,41,0)'] },
+  { key:'Plata', unit:'USD/kg', color:'#94a3b8', gradient:['rgba(148,163,184,.22)','rgba(148,163,184,0)'] },
+  { key:'Cobre', unit:'USD/kg', color:'#f97316', gradient:['rgba(249,115,22,.22)','rgba(249,115,22,0)'] },
+  { key:'Hierro', unit:'USD/kg', color:'#ef4444', gradient:['rgba(239,68,68,.22)','rgba(239,68,68,0)'] },
+  { key:'Litio', unit:'USD/kg', color:'#a855f7', gradient:['rgba(168,85,247,.22)','rgba(168,85,247,0)'] },
+  { key:'Aluminio', unit:'USD/kg', color:'#06b6d4', gradient:['rgba(6,182,212,.22)','rgba(6,182,212,0)'] },
+  { key:'Níquel', unit:'USD/kg', color:'#10b981', gradient:['rgba(16,185,129,.22)','rgba(16,185,129,0)'] },
+  { key:'Platino', unit:'USD/kg', color:'#7e8a9a', gradient:['rgba(126,138,154,.22)','rgba(126,138,154,0)'] },
+  { key:'Paladio', unit:'USD/kg', color:'#ec4899', gradient:['rgba(236,72,153,.22)','rgba(236,72,153,0)'] },
+  { key:'Zinc', unit:'USD/kg', color:'#84cc16', gradient:['rgba(132,204,22,.22)','rgba(132,204,22,0)'] },
+  { key:'Estaño', unit:'USD/kg', color:'#e11d48', gradient:['rgba(225,29,72,.22)','rgba(225,29,72,0)'] },
+  { key:'Coltán', unit:'USD/kg', color:'#7c3aed', gradient:['rgba(124,58,237,.22)','rgba(124,58,237,0)'] },
+  { key:'Tierras Raras', unit:'USD/kg', color:'#0ea5e9', gradient:['rgba(14,165,233,.22)','rgba(14,165,233,0)'] },
+  { key:'Titanio', unit:'USD/kg', color:'#d946ef', gradient:['rgba(217,70,239,.22)','rgba(217,70,239,0)'] },
+];
+
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSLBu9NlQpGH9tXnpIqQlW07x3LPD-mxPH2g8t0vYgxlQWHLzATI_qRsQ5C1CWUTzue_zOD6ajZqGpn/pub?output=csv';
+
+// FALLBACK DATA (14 minerales)
+const FALLBACK_DATA = [
+[1976,4018.84,138.25,1.4,.012,1.5,.8,4.8,5144.12,1286.03,.7,6.3,25,5,6],[1977,7933.19,269.26,1.575,.0135,1.54,1,5.1,9323.71,2572.06,.7125,7.5,27,5.2,6.2],[1978,11847.54,400.28,1.75,.015,1.57,1.2,5.4,13503.3,3858.09,.725,8.5,30,5.5,6.5],[1979,15761.89,531.29,1.925,.0165,1.61,1.4,5.7,17682.9,5144.12,.7375,10.5,35,6,7],[1980,19676.24,662.3,2.1,.018,1.64,1.6,6,21862.49,6430.14,.75,16.75,42,7,7.5],[1981,18940,611.51,2.15,.0186,1.68,1.6,6.28,21187.33,6172.94,.825,14.3,45,7.5,8],[1982,18203.74,560.71,2.2,.0192,1.71,1.6,6.56,20512.16,5915.73,.9,12.8,40,7,8.5],[1983,17467.49,509.91,2.25,.0198,1.75,1.6,6.84,19837,5658.53,.975,12.7,38,6.5,8],[1984,16731.24,459.11,2.3,.0204,1.79,1.6,7.12,19161.83,5401.32,1.05,12.4,35,6,7.5],[1985,15994.98,408.31,2.35,.021,1.82,1.6,7.4,18486.67,5144.12,1.125,11.5,30,5.5,7],[1986,15258.73,357.52,2.4,.0216,1.86,1.6,7.68,17811.5,4886.91,1.2,5.5,28,5,6.5],[1987,14522.48,306.72,2.45,.0222,1.89,1.6,7.96,17136.34,4629.7,1.275,5.85,25,5,6],[1988,13786.23,255.92,2.5,.0228,1.93,1.6,8.24,16461.17,4372.5,1.35,6.65,28,5.5,6.5],[1989,13049.98,205.12,2.55,.0234,1.96,1.6,8.52,15786,4115.29,1.425,7.28,32,6,7],[1990,12313.73,154.32,2.6,.024,2,1.6,8.8,15110.84,3858.09,1.5,6.1,30,6.5,7.5],[1991,11979.36,154.65,2.67,.0264,2.15,1.62,10.46,17075.61,5261.03,1.61,5.6,28,7,7],[1992,11644.99,154.97,2.73,.0288,2.3,1.64,12.12,19040.37,6663.97,1.71,5.85,25,7.5,6.5],[1993,11310.62,155.29,2.8,.0312,2.45,1.66,13.78,21005.14,8066.91,1.82,5.2,22,8,6],[1994,10976.26,155.61,2.87,.0336,2.6,1.68,15.44,22969.91,9469.85,1.93,5.45,20,8.5,5.5],[1995,10641.89,155.93,2.93,.036,2.75,1.7,17.09,24934.67,10872.79,2.03,6.12,22,9,5],[1996,10307.52,156.25,3,.0384,2.9,1.72,18.75,26899.44,12275.73,2.14,6.15,25,9.5,5],[1997,9973.15,156.57,3.07,.0408,3.05,1.74,20.41,28864.2,13678.67,2.24,5.63,28,10,5.5],[1998,9638.79,156.9,3.13,.0432,3.2,1.76,22.07,30828.97,15081.61,2.35,5.55,30,8,5],[1999,9304.42,157.22,3.2,.0456,3.35,1.78,23.73,32793.74,16484.55,2.46,5.4,35,7.5,4.5],[2000,8970.05,157.54,3.27,.048,3.5,1.8,25.39,34758.5,17887.49,2.56,5.45,220,8,5],[2001,12008.29,245.81,3.33,.0504,3.65,1.82,27.05,36723.27,19290.43,2.67,4.4,280,8.5,5.5],[2002,15046.54,334.08,3.4,.0528,3.8,1.84,28.71,38688.04,19497.12,2.78,4.05,80,7,6],[2003,18084.78,422.34,3.47,.0552,3.95,1.86,30.36,40652.8,19703.8,2.88,4.89,45,7.5,7],[2004,21123.02,510.61,3.53,.0576,4.1,1.88,32.02,42617.57,19910.48,2.99,8.5,50,10,8],[2005,24161.27,598.88,3.6,.06,4.25,1.9,33.68,44582.34,20117.17,3.09,7.38,55,12,9],[2006,27199.51,687.15,4.47,.0778,4.4,1.98,35.34,46547.1,20323.85,3.2,8.77,60,18,12],[2007,30237.75,775.42,5.33,.0957,4.55,2.07,37,48511.87,20530.53,3.06,14.5,65,30,14],[2008,33276,863.69,6.2,.1135,4.7,2.15,33.85,50476.63,20737.22,2.91,18.5,70,25,15],[2009,36314.24,951.95,7.07,.1313,4.85,2.23,30.7,48088.3,20943.9,2.77,13.5,55,20,11],[2010,39352.48,1040.22,7.93,.1492,5,2.32,27.55,45700,21150.58,2.62,20.4,130,50,10],[2011,41107.91,1128.49,8.8,.167,6.29,2.4,24.4,43311.62,21357.27,2.48,26.05,280,250,9.5],[2012,42863.34,1076.33,8.5,.1604,7.57,2.32,21.25,40923.28,21563.95,2.33,21.1,200,80,8.5],[2013,44618.77,1024.18,8.2,.1539,8.86,2.24,18.1,38534.94,21770.63,2.19,22.3,195,55,8],[2014,46374.2,972.02,7.9,.1473,10.14,2.17,14.95,36146.6,21977.32,2.04,21.9,200,50,7.5],[2015,48129.63,919.87,7.6,.1408,11.43,2.09,11.8,33758.26,22184,1.9,16.1,190,42,7],[2016,49885.06,867.71,7.3,.1342,12.71,2.01,13.69,32665.13,31346.95,2.11,17.9,175,40,6.5],[2017,51640.49,815.56,7,.1277,14,1.93,15.57,31572.01,40509.91,2.33,20.1,180,52,6.5],[2018,53395.92,763.4,6.7,.1211,12.33,1.86,17.46,30478.89,49672.87,2.54,20.1,210,40,7],[2019,55151.35,711.25,6.4,.1146,10.67,1.78,19.34,29385.76,58835.82,2.76,18.6,160,42,7],[2020,56906.78,659.09,6.1,.108,9,1.7,21.23,28292.64,67998.78,2.97,17.1,130,50,6.5],[2021,61568.63,719.37,6.95,.1085,39.5,1.9,23.11,29257.16,77161.73,3.19,32.5,155,110,7],[2022,66230.49,779.66,7.8,.109,70,2.1,25,30221.68,63229.75,3.4,30.9,205,140,7.5],[2023,70892.34,839.94,8.65,.1095,44,2.3,21.25,31186.2,49297.77,3.1,25.9,190,75,9.3],[2024,75554.2,900.22,9.5,.11,18,2.5,17.5,32150.72,35365.79,2.8,28.5,185,65,10.5],[2025,118957.67,1768.29,11.05,.105,19.4,2.8,17.5,50798.14,45654.03,3.09,35,200,96,7.5],[2026,162361.15,2636.36,12.6,.1,20.8,3.1,17.5,69445.56,55942.26,3.37,49,215,205,7.2],
+];
+
+let years=[],mineralData={},currentTheme='dark',generalChart=null,individualCharts=[],currentScaleType='logarithmic',chartModes={};
+
+// CSV PARSER (español)
+function parseCSV(csv){const lines=csv.trim().split('\n'),data=[];for(let i=1;i<lines.length;i++){const line=lines[i].trim();if(!line)continue;const fields=[];let cur='',inQ=false;for(let j=0;j<line.length;j++){const c=line[j];if(c==='"')inQ=!inQ;else if(c===','&&!inQ){fields.push(cur.trim());cur='';}else cur+=c;}fields.push(cur.trim());const nums=fields.map(v=>{let c=v.replace(/"/g,'').trim();if(!c)return NaN;if(/^\d{1,3}(\.\d{3})+(,\d+)?$/.test(c))c=c.replace(/\./g,'').replace(',','.');else if(/^\d+,\d+$/.test(c))c=c.replace(',','.');return parseFloat(c);});if(nums.length>=11&&!isNaN(nums[0])&&nums[0]>1900)data.push(nums);}return data;}
+
+async function loadData(){const s=document.getElementById('dataStatus');try{s.textContent='⏳ Conectando con Google Sheets...';s.style.color='#f0b429';const r=await fetch(SHEET_CSV_URL);if(!r.ok)throw new Error('HTTP '+r.status);const csv=await r.text(),p=parseCSV(csv);if(p.length<5)throw new Error('Insuficiente');processData(p);s.textContent='🟢 Datos en vivo — '+p[0].length+' col · '+new Date().toLocaleString('es-VE');s.style.color='#00d68f';}catch(e){console.warn('Fallback:',e.message);processData(FALLBACK_DATA);s.textContent='🟡 Datos locales (14 minerales)';s.style.color='#f0b429';}buildDashboard();}
+
+function processData(raw){years=raw.map(r=>r[0]);mineralData={};MINERALS.forEach((m,i)=>{mineralData[m.key]=raw.map(r=>(i+1<r.length)?r[i+1]:0);});}
+
+function fmt(v){if(v>=1e6)return(v/1e6).toFixed(1)+'M';if(v>=1e3)return(v/1e3).toFixed(1)+'K';if(v>=1)return v.toFixed(2);return v.toFixed(4);}
+
+function tc(){const l=currentTheme==='light';return{grid:l?'rgba(0,0,0,0.04)':'rgba(255,255,255,0.03)',tick:l?'#4a5568':'#505a6e',tbg:l?'rgba(255,255,255,0.96)':'rgba(12,16,23,0.96)',tt:l?'#0d1117':'#edf2f7',tb:l?'rgba(0,0,0,0.08)':'rgba(255,255,255,0.08)'};}
+
+function toggleTheme(){currentTheme=currentTheme==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',currentTheme==='light'?'light':'');document.getElementById('themeIcon').textContent=currentTheme==='dark'?'🌙':'☀️';document.getElementById('themeLabel').textContent=currentTheme==='dark'?'Oscuro':'Claro';rebuildAllCharts();}
+
+function buildDashboard(){buildKPIs();buildGeneralChart();rebuildLegend();buildIndividualCharts();buildTable();}
+
+// KPIs
+function buildKPIs(){const strip=document.getElementById('kpiStrip');strip.innerHTML='';MINERALS.forEach(m=>{const v=mineralData[m.key];if(!v||!v.length)return;const cur=v[v.length-1],prev=v[v.length-2],ch=prev?((cur-prev)/prev*100).toFixed(1):0,up=ch>=0;const card=document.createElement('div');card.className='kpi';card.style.setProperty('--kpi-color',m.color);card.innerHTML=`<div class="kpi-name">${m.key}</div><div class="kpi-val">${fmt(cur)}</div><div class="kpi-chg ${up?'up':'dn'}">${up?'▲':'▼'} ${Math.abs(ch)}% vs ${years[years.length-2]}</div>`;strip.appendChild(card);});}
+
+// GENERAL CHART
+function buildGeneralChart(){const t=tc(),ctx=document.getElementById('generalChart').getContext('2d');generalChart=new Chart(ctx,{type:'line',data:{labels:years,datasets:MINERALS.map(m=>({label:m.key,data:mineralData[m.key],borderColor:m.color,backgroundColor:'transparent',borderWidth:2,tension:.35,pointRadius:0,pointHitRadius:10,pointHoverRadius:5,pointHoverBackgroundColor:m.color,pointHoverBorderColor:'#fff',pointHoverBorderWidth:2}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:t.tbg,titleColor:t.tt,bodyColor:t.tt,borderColor:t.tb,borderWidth:1,cornerRadius:8,padding:12,mode:'index',intersect:false,callbacks:{title:c=>`Año ${c[0].label}`,label:c=>`${c.dataset.label}: ${fmt(c.parsed.y)} USD/kg`}}},scales:{x:{grid:{color:t.grid},ticks:{color:t.tick,font:{size:11},autoSkip:true,maxRotation:0,callback:(v,i)=>{const y=years[i];return(y===years[0]||y===years[years.length-1]||y%5===0)?y:'';}},border:{display:false}},y:{type:currentScaleType,grid:{color:t.grid},ticks:{color:t.tick,font:{size:11},callback:v=>fmt(v)},border:{display:false}}},interaction:{intersect:false,mode:'index'}}});}
+
+function setScale(type){currentScaleType=type;generalChart.options.scales.y.type=type;generalChart.update();document.getElementById('btnLinear').classList.toggle('active',type==='linear');document.getElementById('btnLog').classList.toggle('active',type==='logarithmic');}
+
+function rebuildLegend(){const c=document.getElementById('generalLegend');c.innerHTML='';MINERALS.forEach((m,i)=>{const it=document.createElement('div');it.className='leg-item';it.innerHTML=`<span class="leg-dot" style="background:${m.color}"></span>${m.key}`;it.addEventListener('click',()=>{const meta=generalChart.getDatasetMeta(i);meta.hidden=!meta.hidden;it.classList.toggle('hidden',meta.hidden);generalChart.update();});c.appendChild(it);});}
+
+// =============================================
+// CANDLESTICK DRAWING (Canvas puro)
+// =============================================
+function drawRoundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function drawCandlestick(canvasId, vals, color, mineralKey) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const parent = canvas.parentElement;
+  if (!parent) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W = parent.clientWidth;
+  const H = parent.clientHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const isLight = currentTheme === 'light';
+  const GREEN = '#00d68f', RED = '#ff4757', GREEN_DIM = 'rgba(0,214,143,.55)', RED_DIM = 'rgba(255,71,87,.55)';
+  const tickCol = isLight ? '#4a5568' : '#6b7a90';
+  const gridCol = isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.04)';
+
+  // Build OHLC from annual closes
+  const ohlc = [];
+  for (let i = 0; i < vals.length; i++) {
+    const close = vals[i];
+    const open = i > 0 ? vals[i - 1] : close * 0.95;
+    const spread = Math.max(open, close) * 0.04;
+    const high = Math.max(open, close) + spread;
+    const low = Math.max(Math.min(open, close) - spread, 0);
+    ohlc.push({ year: years[i], o: open, h: high, l: low, c: close });
+  }
+
+  const allV = ohlc.flatMap(d => [d.h, d.l]);
+  const maxV = Math.max(...allV), minV = Math.min(...allV);
+  const range = maxV - minV || 1;
+  const padT = 16, padB = 30, padL = 62, padR = 14;
+  const cW = W - padL - padR, cH = H - padT - padB;
+  const gap = cW / ohlc.length;
+  const barW = Math.max(3, Math.min(gap * 0.58, 16));
+  const yPos = v => padT + cH * (1 - (v - minV) / range);
+
+  // --- Format helper for tooltip (larger values) ---
+  function fmtTT(v) {
+    if (v >= 1e6) return (v / 1e6).toFixed(2) + ' M';
+    if (v >= 1e3) return (v / 1e3).toFixed(2) + ' K';
+    if (v >= 1) return v.toFixed(2);
+    if (v >= 0.01) return v.toFixed(4);
+    return v.toFixed(6);
+  }
+
+  function render(hi) {
+    ctx.clearRect(0, 0, W, H);
+
+    // --- Grid & Y axis ---
+    const gN = 5;
+    for (let i = 0; i <= gN; i++) {
+      const y = padT + (cH / gN) * i;
+      ctx.strokeStyle = gridCol;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(W - padR, y); ctx.stroke();
+      const val = maxV - (range / gN) * i;
+      ctx.fillStyle = tickCol;
+      ctx.font = '10px "Space Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(fmt(val), padL - 8, y);
+    }
+
+    // --- X axis labels ---
+    ctx.fillStyle = tickCol;
+    ctx.font = '9px "Space Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ohlc.forEach((d, i) => {
+      if (d.year === years[0] || d.year === years[years.length - 1] || d.year % 10 === 0) {
+        ctx.fillText(d.year, padL + gap * i + gap / 2, H - padB + 8);
+      }
+    });
+
+    // --- Highlight column ---
+    if (hi >= 0 && hi < ohlc.length) {
+      const cx = padL + gap * hi;
+      ctx.fillStyle = isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.02)';
+      ctx.fillRect(cx, padT, gap, cH);
+      // Crosshair vertical
+      ctx.save();
+      ctx.strokeStyle = isLight ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 0.8;
+      ctx.setLineDash([3, 3]);
+      const lx = cx + gap / 2;
+      ctx.beginPath(); ctx.moveTo(lx, padT); ctx.lineTo(lx, padT + cH); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      // Horizontal crosshair at close
+      const d = ohlc[hi];
+      const yC = yPos(d.c);
+      ctx.save();
+      ctx.strokeStyle = d.c >= d.o ? GREEN : RED;
+      ctx.lineWidth = 0.6;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(padL, yC); ctx.lineTo(W - padR, yC); ctx.stroke();
+      ctx.setLineDash([]);
+      // Price label on Y axis
+      ctx.fillStyle = d.c >= d.o ? GREEN : RED;
+      ctx.font = 'bold 10px "Space Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(fmtTT(d.c), padL - 8, yC);
+      ctx.restore();
+    }
+
+    // --- Candles ---
+    ohlc.forEach((d, i) => {
+      const x = padL + gap * i + gap / 2;
+      const bull = d.c >= d.o;
+      const hov = i === hi;
+      const colFill = hov ? (bull ? GREEN : RED) : (bull ? GREEN_DIM : RED_DIM);
+      const colStroke = bull ? GREEN : RED;
+
+      // Wick
+      ctx.strokeStyle = colStroke;
+      ctx.lineWidth = hov ? 1.8 : 1;
+      ctx.globalAlpha = hov ? 1 : 0.7;
+      ctx.beginPath();
+      ctx.moveTo(x, yPos(d.h));
+      ctx.lineTo(x, yPos(d.l));
+      ctx.stroke();
+
+      // Body
+      const yO = yPos(d.o), yCl = yPos(d.c);
+      const bTop = Math.min(yO, yCl);
+      const bH = Math.max(Math.abs(yCl - yO), 2);
+      ctx.fillStyle = colFill;
+      ctx.globalAlpha = hov ? 1 : 0.8;
+      ctx.fillRect(x - barW / 2, bTop, barW, bH);
+      ctx.globalAlpha = 1;
+
+      // Highlight border on hover
+      if (hov) {
+        ctx.strokeStyle = isLight ? '#000' : '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x - barW / 2 - 1, bTop - 1, barW + 2, bH + 2);
+      }
+    });
+
+    // --- Tooltip ---
+    if (hi >= 0 && hi < ohlc.length) {
+      const d = ohlc[hi];
+      const bull = d.c >= d.o;
+      const chgPct = d.o !== 0 ? ((d.c - d.o) / d.o * 100) : 0;
+      const cx = padL + gap * hi + gap / 2;
+
+      const titleCol = isLight ? '#0d1117' : '#f1f5f9';
+      const subCol = isLight ? '#374151' : '#94a3b8';
+      const valCol = isLight ? '#111827' : '#e2e8f0';
+
+      const ttLines = [
+        { t: `${mineralKey || 'Mineral'} — ${d.year}`, font: 'bold 13px "Outfit", sans-serif', col: titleCol },
+        { t: '', font: '6px sans-serif', col: 'transparent' }, // spacer
+        { t: `Apertura:  ${fmtTT(d.o)}`, font: '12px "Space Mono", monospace', col: subCol },
+        { t: `Cierre:    ${fmtTT(d.c)}`, font: 'bold 12px "Space Mono", monospace', col: valCol },
+        { t: `Máximo:    ${fmtTT(d.h)}`, font: '12px "Space Mono", monospace', col: subCol },
+        { t: `Mínimo:    ${fmtTT(d.l)}`, font: '12px "Space Mono", monospace', col: subCol },
+        { t: '', font: '4px sans-serif', col: 'transparent' }, // spacer
+        { t: `Var: ${bull ? '+' : ''}${chgPct.toFixed(1)}%  ${bull ? '▲ SUBE' : '▼ BAJA'}`, font: 'bold 12px "Outfit", sans-serif', col: bull ? GREEN : RED },
+      ];
+
+      // Measure max width
+      const lineH = 20;
+      const ttPadX = 16, ttPadY = 14;
+      let mxW = 0;
+      ttLines.forEach(l => {
+        ctx.font = l.font;
+        mxW = Math.max(mxW, ctx.measureText(l.t).width);
+      });
+      const bxW = mxW + ttPadX * 2 + 8;
+      const bxH = ttLines.length * lineH + ttPadY * 2;
+
+      // Position - prefer right, flip left if overflow
+      let bxX = cx + 20;
+      let bxY = Math.max(padT + 4, yPos(d.h) - bxH / 2);
+      if (bxX + bxW > W - 6) bxX = cx - bxW - 20;
+      if (bxX < 4) bxX = 4;
+      if (bxY + bxH > H - 4) bxY = H - bxH - 4;
+      if (bxY < 4) bxY = 4;
+
+      // Draw tooltip background
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.4)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetY = 6;
+      ctx.fillStyle = isLight ? 'rgba(255,255,255,0.97)' : 'rgba(8,11,18,0.97)';
+      drawRoundRect(ctx, bxX, bxY, bxW, bxH, 10);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+
+      // Border
+      ctx.strokeStyle = bull ? GREEN : RED;
+      ctx.lineWidth = 1.5;
+      drawRoundRect(ctx, bxX, bxY, bxW, bxH, 10);
+      ctx.stroke();
+
+      // Left color accent bar
+      ctx.fillStyle = bull ? GREEN : RED;
+      drawRoundRect(ctx, bxX, bxY + 4, 4, bxH - 8, 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Draw text lines
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      let ty = bxY + ttPadY + lineH / 2;
+      ttLines.forEach(l => {
+        ctx.font = l.font;
+        ctx.fillStyle = l.col;
+        if (l.t) ctx.fillText(l.t, bxX + ttPadX + 6, ty);
+        ty += lineH;
+      });
+
+      // Year label at bottom of crosshair
+      const yrX = padL + gap * hi + gap / 2;
+      ctx.fillStyle = isLight ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)';
+      ctx.font = 'bold 10px "Space Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(d.year, yrX, padT + cH + 3);
+    }
+  }
+
+  render(-1);
+
+  // --- Mouse events ---
+  function getIdx(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX !== undefined ? (e.clientX - rect.left) : (e.touches && e.touches[0] ? e.touches[0].clientX - rect.left : -1);
+    return Math.floor((mx - padL) / gap);
+  }
+  canvas.onmousemove = function(e) {
+    const idx = getIdx(e);
+    if (idx >= 0 && idx < ohlc.length) { canvas.style.cursor = 'crosshair'; render(idx); }
+    else { canvas.style.cursor = 'default'; render(-1); }
+  };
+  canvas.onmouseleave = function() { canvas.style.cursor = 'default'; render(-1); };
+  // Touch support
+  canvas.ontouchmove = function(e) {
+    e.preventDefault();
+    const idx = getIdx(e.touches[0]);
+    if (idx >= 0 && idx < ohlc.length) render(idx); else render(-1);
+  };
+  canvas.ontouchend = function() { render(-1); };
+}
+
+// =============================================
+// INDIVIDUAL CHARTS (línea + vela toggle)
+// =============================================
+function buildIndividualCharts(){
+  const t=tc(),grid=document.getElementById('chartGrid');
+  grid.innerHTML='';individualCharts=[];
+  MINERALS.forEach((m,idx)=>{
+    const vals=mineralData[m.key];if(!vals||!vals.length)return;
+    const maxV=Math.max(...vals),minV=Math.min(...vals),avg=vals.reduce((a,b)=>a+b,0)/vals.length,cur=vals[vals.length-1];
+    if(!chartModes[m.key])chartModes[m.key]='line';
+    const mode=chartModes[m.key];
+    const card=document.createElement('div');card.className='ch-card';card.style.animationDelay=`${idx*.03}s`;
+    card.innerHTML=`
+      <div class="ch-hdr">
+        <div><div class="m-name"><span class="m-dot" style="background:${m.color}"></span>${m.key}</div><div class="m-unit">${m.unit} · ${years[0]}–${years[years.length-1]}</div></div>
+        <div class="m-stats">
+          <div class="st"><div class="st-l">Máx</div><div class="st-v" style="color:${m.color}">${fmt(maxV)}</div></div>
+          <div class="st"><div class="st-l">Mín</div><div class="st-v">${fmt(minV)}</div></div>
+          <div class="st"><div class="st-l">Prom</div><div class="st-v">${fmt(avg)}</div></div>
+          <div class="st"><div class="st-l">${years[years.length-1]}</div><div class="st-v" style="color:#00d68f">${fmt(cur)}</div></div>
+          <div class="ch-type-sw">
+            <button class="ch-t-btn ${mode==='line'?'active':''}" onclick="switchChartMode('${m.key}','line',${idx})">📈</button>
+            <button class="ch-t-btn ${mode==='candle'?'active':''}" onclick="switchChartMode('${m.key}','candle',${idx})">🕯️</button>
+          </div>
+        </div>
+      </div>
+      ${mode==='line'?`<div class="ch-wrap"><canvas id="chart-${idx}"></canvas></div>`:`<div class="candle-wrap"><canvas id="candle-${idx}"></canvas></div>`}
+    `;
+    grid.appendChild(card);
+    
+    if(mode==='line'){
+      const ctx=document.getElementById(`chart-${idx}`).getContext('2d');
+      const grad=ctx.createLinearGradient(0,0,0,200);
+      grad.addColorStop(0,m.gradient[0]);grad.addColorStop(1,m.gradient[1]);
+      const chart=new Chart(ctx,{type:'line',data:{labels:years,datasets:[{data:vals,borderColor:m.color,backgroundColor:grad,borderWidth:2,fill:true,tension:.35,pointRadius:0,pointHitRadius:10,pointHoverRadius:5,pointHoverBackgroundColor:m.color,pointHoverBorderColor:'#fff',pointHoverBorderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:t.tbg,titleColor:t.tt,bodyColor:t.tt,borderColor:m.color,borderWidth:1,cornerRadius:8,padding:10,displayColors:false,callbacks:{title:c=>`Año ${c[0].label}`,label:c=>`${m.key}: ${fmt(c.parsed.y)} ${m.unit}`}}},scales:{x:{grid:{color:t.grid},ticks:{color:t.tick,font:{size:10},maxTicksLimit:12},border:{display:false}},y:{grid:{color:t.grid},ticks:{color:t.tick,font:{size:10},callback:v=>fmt(v)},border:{display:false}}},interaction:{intersect:false,mode:'index'}}});
+      individualCharts.push(chart);
+    } else {
+      // Dibujar velas después de que el DOM se renderice
+      setTimeout(()=>drawCandlestick(`candle-${idx}`,vals,m.color,m.key),50);
+    }
+  });
+}
+
+function switchChartMode(key, mode, idx) {
+  chartModes[key] = mode;
+  // Destruir charts existentes
+  individualCharts.forEach(c => c.destroy());
+  individualCharts = [];
+  buildIndividualCharts();
+}
+
+function rebuildAllCharts(){if(generalChart)generalChart.destroy();individualCharts.forEach(c=>c.destroy());individualCharts=[];buildGeneralChart();buildIndividualCharts();rebuildLegend();}
+
+// TABLE
+function buildTable(){
+  // Datos base: producción en KILOGRAMOS (valor numérico puro)
+  // Conversiones aplicadas:
+  //   t  (toneladas)  × 1.000        = kg
+  //   kt (kilotoneladas) × 1.000.000 = kg
+  //   Mt (megatoneladas) × 1.000.000.000 = kg
+  //   kg ya está en kg
+  const rawData=[
+    {m:'Oro', producers:[
+      {country:'China', kg:380*1e3},{country:'Rusia', kg:330*1e3},{country:'Australia', kg:290*1e3},{country:'Canadá', kg:200*1e3},{country:'EE.UU.', kg:158*1e3},
+      {country:'Indonesia', kg:140*1e3},{country:'Ghana', kg:130*1e3},{country:'Sudáfrica', kg:120*1e3},{country:'México', kg:120*1e3},{country:'Uzbekistán', kg:110*1e3}
+    ]},
+    {m:'Plata', producers:[
+      {country:'México', kg:6120*1e3},{country:'Perú', kg:4160*1e3},{country:'China', kg:3570*1e3},{country:'Chile', kg:1600*1e3},{country:'Rusia', kg:1500*1e3},
+      {country:'Bolivia', kg:1400*1e3},{country:'Polonia', kg:1300*1e3},{country:'Australia', kg:1200*1e3},{country:'Argentina', kg:1000*1e3},{country:'EE.UU.', kg:970*1e3}
+    ]},
+    {m:'Cobre', producers:[
+      {country:'Chile', kg:5300*1e6},{country:'R.D. Congo', kg:3300*1e6},{country:'Perú', kg:2600*1e6},{country:'China', kg:1800*1e6},{country:'EE.UU.', kg:1100*1e6},
+      {country:'Indonesia', kg:1000*1e6},{country:'Australia', kg:800*1e6},{country:'Rusia', kg:780*1e6},{country:'Kazajistán', kg:740*1e6},{country:'México', kg:700*1e6}
+    ]},
+    {m:'Hierro', producers:[
+      {country:'Australia', kg:960*1e9},{country:'Brasil', kg:380*1e9},{country:'China', kg:340*1e9},{country:'India', kg:310*1e9},{country:'Rusia', kg:100*1e9},
+      {country:'Sudáfrica', kg:61*1e9},{country:'Ucrania', kg:53*1e9},{country:'Canadá', kg:50*1e9},{country:'EE.UU.', kg:40*1e9},{country:'Kazajistán', kg:38*1e9}
+    ]},
+    {m:'Litio', producers:[
+      {country:'Australia', kg:55000*1e3},{country:'Chile', kg:26000*1e3},{country:'China', kg:14000*1e3},{country:'Argentina', kg:9600*1e3},{country:'Brasil', kg:4900*1e3},
+      {country:'Zimbabwe', kg:3400*1e3},{country:'Portugal', kg:1100*1e3},{country:'Canadá', kg:900*1e3},{country:'Namibia', kg:500*1e3},{country:'Nigeria', kg:300*1e3}
+    ]},
+    {m:'Aluminio', producers:[
+      {country:'China', kg:36000*1e6},{country:'India', kg:3700*1e6},{country:'Rusia', kg:3600*1e6},{country:'Canadá', kg:3200*1e6},{country:'EAU', kg:2700*1e6},
+      {country:'Australia', kg:1600*1e6},{country:'Bahréin', kg:1500*1e6},{country:'Noruega', kg:1400*1e6},{country:'EE.UU.', kg:700*1e6},{country:'Islandia', kg:680*1e6}
+    ]},
+    {m:'Níquel', producers:[
+      {country:'Indonesia', kg:800000*1e3},{country:'Filipinas', kg:370000*1e3},{country:'Rusia', kg:270000*1e3},{country:'N. Caledonia', kg:190000*1e3},{country:'Australia', kg:150000*1e3},
+      {country:'Canadá', kg:130000*1e3},{country:'China', kg:120000*1e3},{country:'Brasil', kg:83000*1e3},{country:'Guatemala', kg:60000*1e3},{country:'Cuba', kg:50000*1e3}
+    ]},
+    {m:'Platino', producers:[
+      {country:'Sudáfrica', kg:120000},{country:'Rusia', kg:23000},{country:'Zimbabwe', kg:16000},{country:'Canadá', kg:7000},{country:'EE.UU.', kg:4000},
+      {country:'Colombia', kg:1900},{country:'Botswana', kg:1200},{country:'Finlandia', kg:700},{country:'Australia', kg:300},{country:'China', kg:200}
+    ]},
+    {m:'Paladio', producers:[
+      {country:'Rusia', kg:92000},{country:'Sudáfrica', kg:76000},{country:'Canadá', kg:16000},{country:'EE.UU.', kg:12000},{country:'Zimbabwe', kg:11000},
+      {country:'Botswana', kg:2700},{country:'Colombia', kg:1400},{country:'Finlandia', kg:900},{country:'Australia', kg:600},{country:'China', kg:500}
+    ]},
+    {m:'Zinc', producers:[
+      {country:'China', kg:4100*1e6},{country:'Australia', kg:1200*1e6},{country:'Perú', kg:1100*1e6},{country:'India', kg:850*1e6},{country:'EE.UU.', kg:700*1e6},
+      {country:'México', kg:660*1e6},{country:'Bolivia', kg:500*1e6},{country:'Kazajistán', kg:400*1e6},{country:'Suecia', kg:340*1e6},{country:'Turquía', kg:280*1e6}
+    ]},
+    {m:'Estaño', producers:[
+      {country:'China', kg:68000*1e3},{country:'Indonesia', kg:52000*1e3},{country:'Birmania', kg:34000*1e3},{country:'Perú', kg:25000*1e3},{country:'R.D. Congo', kg:19000*1e3},
+      {country:'Bolivia', kg:16000*1e3},{country:'Brasil', kg:14000*1e3},{country:'Australia', kg:7000*1e3},{country:'Nigeria', kg:6000*1e3},{country:'Vietnam', kg:4500*1e3}
+    ]},
+    {m:'Coltán', producers:[
+      {country:'R.D. Congo', kg:700*1e3},{country:'Ruanda', kg:500*1e3},{country:'Brasil', kg:380*1e3},{country:'Nigeria', kg:240*1e3},{country:'Australia', kg:180*1e3},
+      {country:'China', kg:150*1e3},{country:'Etiopía', kg:120*1e3},{country:'Mozambique', kg:90*1e3},{country:'Uganda', kg:60*1e3},{country:'Malasia', kg:40*1e3}
+    ]},
+    {m:'Tierras Raras', producers:[
+      {country:'China', kg:240000*1e3},{country:'Birmania', kg:38000*1e3},{country:'EE.UU.', kg:43000*1e3},{country:'Australia', kg:18000*1e3},{country:'India', kg:8000*1e3},
+      {country:'Tailandia', kg:7100*1e3},{country:'Rusia', kg:2600*1e3},{country:'Vietnam', kg:2000*1e3},{country:'Brasil', kg:500*1e3},{country:'Madagascar', kg:400*1e3}
+    ]},
+    {m:'Titanio', producers:[
+      {country:'China', kg:240000*1e3},{country:'Japón', kg:40000*1e3},{country:'Rusia', kg:38000*1e3},{country:'Kazajistán', kg:15000*1e3},{country:'Arabia S.', kg:12000*1e3},
+      {country:'Ucrania', kg:8000*1e3},{country:'India', kg:2500*1e3},{country:'EE.UU.', kg:500*1e3},{country:'Corea S.', kg:300*1e3},{country:'Otros', kg:1000*1e3}
+    ]},
+  ];
+
+  // Función para formatear kg de forma legible
+  function fmtKg(kg) {
+    if (kg >= 1e12)      return (kg / 1e12).toFixed(kg % 1e12 === 0 ? 0 : 1).replace('.', ',') + ' Tkg';   // Tera-kg = Mt
+    if (kg >= 1e9)       return (kg / 1e9).toFixed(kg % 1e9 === 0 ? 0 : 1).replace('.', ',') + ' Gkg';     // Giga-kg = kt
+    if (kg >= 1e6)       return (kg / 1e6).toFixed(kg % 1e6 === 0 ? 0 : 1).replace('.', ',') + ' Mkg';     // Mega-kg = t
+    if (kg >= 1e3)       return (kg / 1e3).toFixed(kg % 1e3 === 0 ? 0 : 1).replace('.', ',') + ' mil kg';
+    return kg.toLocaleString('es-VE') + ' kg';
+  }
+
+  // Formatea número grande con puntos de miles (formato venezolano)
+  function fmtNum(n) {
+    if (n >= 1e12) {
+      const v = n / 1e12;
+      return v.toFixed(v === Math.floor(v) ? 0 : 1).replace('.', ',') + ' billones kg';
+    }
+    if (n >= 1e9) {
+      const v = n / 1e9;
+      return v.toFixed(v === Math.floor(v) ? 0 : 1).replace('.', ',') + ' mil millones kg';
+    }
+    if (n >= 1e6) {
+      const v = n / 1e6;
+      return v.toFixed(v === Math.floor(v) ? 0 : 1).replace('.', ',') + ' millones kg';
+    }
+    if (n >= 1e3) {
+      return Math.round(n).toLocaleString('es-VE') + ' kg';
+    }
+    return n.toLocaleString('es-VE') + ' kg';
+  }
+
+  const tbody = document.querySelector('#producersTable tbody');
+  tbody.innerHTML = '';
+  rawData.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    const col = MINERALS[i] ? MINERALS[i].color : '#fff';
+    const cells = r.producers.map((p, j) => {
+      const text = `${p.country} (${fmtNum(p.kg)})`;
+      return `<td>${j === 0 ? '<strong>' + text + '</strong>' : text}</td>`;
+    }).join('');
+    tr.innerHTML = `<td class="rk">${i + 1}</td><td class="mn" style="color:${col}">${r.m}</td>${cells}`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function reloadData(){const b=document.getElementById('reloadBtn');b.textContent='⏳';b.disabled=true;if(generalChart)generalChart.destroy();individualCharts.forEach(c=>c.destroy());individualCharts=[];await loadData();b.textContent='🔄 Actualizar';b.disabled=false;}
+
+// INIT
+loadData();
+// Re-draw candles on resize
+window.addEventListener('resize',()=>{MINERALS.forEach((m,i)=>{if(chartModes[m.key]==='candle')drawCandlestick(`candle-${i}`,mineralData[m.key],m.color,m.key);});});

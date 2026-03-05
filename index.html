@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control — 14 Minerales Estratégicos (1976–2026)</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="dashboard">
+
+  <div class="hdr">
+    <div class="hdr-left">
+      <h1>Cotización de Minerales Estratégicos</h1>
+      <div class="sub">14 Minerales · Precios 2026 · Serie Histórica 50 Años</div>
+    </div>
+    <div class="hdr-right">
+      <span class="badge">1976 – 2026</span>
+      <div class="theme-sw" onclick="toggleTheme()">
+        <span class="ico" id="themeIcon">🌙</span>
+        <span class="lbl" id="themeLabel">Oscuro</span>
+        <div class="tgl"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span id="dataStatus">⏳ Cargando datos...</span>
+    <button id="reloadBtn" onclick="reloadData()">🔄 Actualizar</button>
+  </div>
+
+  <div class="kpi-strip" id="kpiStrip"></div>
+
+  <div class="section">
+    <div class="sec-hdr">
+      <div class="sec-title">Comparativa General — 14 Minerales</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="scale-toggle">
+          <button class="sc-btn" id="btnLinear" onclick="setScale('linear')">Lineal</button>
+          <button class="sc-btn active" id="btnLog" onclick="setScale('logarithmic')">Log</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend" id="generalLegend"></div>
+    <div class="gen-wrap"><canvas id="generalChart"></canvas></div>
+  </div>
+
+  <div class="ch-grid" id="chartGrid"></div>
+
+  <div class="tbl-section">
+    <div class="sec-title">Principales Países Productores por Mineral</div>
+    <div class="tbl-sub">Top 10 productores mundiales — USGS Mineral Commodity Summaries 2025</div>
+    <div class="tbl-wrap">
+      <table class="tbl" id="producersTable">
+        <thead><tr><th>#</th><th>Mineral</th><th>1°</th><th>2°</th><th>3°</th><th>4°</th><th>5°</th><th>6°</th><th>7°</th><th>8°</th><th>9°</th><th>10°</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="tbl-src">
+      <strong>Fuentes:</strong> USGS MCS 2025 · World Gold Council 2024 · The Silver Institute 2025 · IPA PGM Data 2024 · IEA Critical Minerals 2025 · LME · USGS Tantalum, Rare Earths, Titanium 2024–2025
+    </div>
+  </div>
+
+  <div class="ftr">
+    Ministerio del Poder Popular de Desarrollo Minero Ecológico e Industrias Básicas<br>
+    Viceministerio de Inversión y Políticas de Comercialización Minera<br>
+    Serie histórica 1976–2026 · 14 minerales estratégicos · Datos conectados a Google Sheets
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
